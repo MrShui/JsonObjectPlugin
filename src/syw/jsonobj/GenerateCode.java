@@ -17,10 +17,12 @@ import static syw.jsonobj.Utils.upcaseFirseChar;
 public class GenerateCode {
     //一些基本的数据类型，加上String
     private static final List<String> BASIC_TYPE = Arrays.asList("int", "String", "boolean", "double", "long");
+    private PsiClass psiClassCopy;
 
     public String generateCode(PsiClass psiClass) {
         PsiField[] fields = psiClass.getFields();
         String fileClassName = psiClass.getName();
+        psiClassCopy = (PsiClass) psiClass.copy();
 
         StringBuffer sb = new StringBuffer();
         appendHead(sb, fileClassName);
@@ -51,48 +53,56 @@ public class GenerateCode {
                 handBasic(sb, className, isInnerClass, name, type);
             } else {
                 //对象
+                appendObject(sb, className, psiClass, type);
+            }
+        }
+    }
+
+    private void appendObject(StringBuffer sb, String className, PsiClass psiClass, String type) {
 //                JSONObject playlink2Obj = videosObj.optJSONObject("playlink2");
 //                NewPageChannelInfos.Videos.Playlink2 playlink2 = new NewPageChannelInfos.Videos.Playlink2();
 //                playlink2.setId(playlink2Obj.optInt("id"));
-                sb.append("\n")
-                        .append("    ")
-                        .append("    ")
-                        .append("JSONObject ")
-                        .append(lowerFirstChar(type))
-                        .append("Obj = ")
-                        .append(lowerFirstChar(className))
-                        .append("Obj.optJSONObject(\"")
-                        .append(lowerFirstChar(className))
-                        .append("\");\n");
+        sb.append("\n")
+                .append("    ")
+                .append("    ")
+                .append("JSONObject ")
+                .append(lowerFirstChar(type))
+                .append("Obj = ")
+                .append(lowerFirstChar(className))
+                .append("Obj.optJSONObject(\"")
+                .append(lowerFirstChar(className))
+                .append("\");\n");
 
-                sb.append("    ")
-                        .append("    ")
-                        .append(upcaseFirseChar(className))
-                        .append(".")
-                        .append(type)
-                        .append(" ")
-                        .append(lowerFirstChar(type))
-                        .append(" = new ")
-                        .append(upcaseFirseChar(className))
-                        .append(".")
-                        .append(type)
-                        .append("();\n");
+        sb.append("    ")
+                .append("    ")
+                .append(psiClassCopy.getName())
+                .append(".")
+                .append(upcaseFirseChar(className))
+                .append(".")
+                .append(type)
+                .append(" ")
+                .append(lowerFirstChar(type))
+                .append(" = new ")
+                .append(psiClassCopy.getName())
+                .append(".")
+                .append(upcaseFirseChar(className))
+                .append(".")
+                .append(type)
+                .append("();\n");
 
-                PsiClass innerClass = findInnerClass(psiClass, type);
-                appendParams(sb, innerClass.getFields(), innerClass.getName(), innerClass, true);
+        PsiClass innerClass = findInnerClass(psiClass, type);
+        appendParams(sb, innerClass.getFields(), innerClass.getName(), innerClass, true);
 
-                //                videos.setPlaylink2(playlink2);
-                sb.append("    ")
-                        .append("    ")
-                        .append(lowerFirstChar(className))
-                        .append(".")
-                        .append("set")
-                        .append(upcaseFirseChar(type))
-                        .append("(")
-                        .append(lowerFirstChar(type))
-                        .append(");\n");
-            }
-        }
+        //                videos.setPlaylink2(playlink2);
+        sb.append("    ")
+                .append("    ")
+                .append(lowerFirstChar(className))
+                .append(".")
+                .append("set")
+                .append(upcaseFirseChar(type))
+                .append("(")
+                .append(lowerFirstChar(type))
+                .append(");\n\n");
     }
 
     private void handBasic(StringBuffer sb, String className, boolean isInnerClass, String name, String type) {
@@ -117,7 +127,8 @@ public class GenerateCode {
     private void handList(StringBuffer sb, String className, PsiClass psiClass, String name, String type) {
         //JSONArray videosArray = jsonObject.optJSONArray("videos");
         //List<NewPageChannelInfos.Videos> videosList = new ArrayList<NewPageChannelInfos.Videos>();
-        sb.append("    ")
+        sb.append("\n")
+                .append("    ")
                 .append("JSONArray ")
                 .append(name)
                 .append("Array = ")
@@ -202,14 +213,15 @@ public class GenerateCode {
         sb.append("    }\n");
 
         //bean.setVideos(videosList);
-        sb.append("    ")
+        sb.append("\n")
+                .append("    ")
                 .append(lowerFirstChar(outsideClassName))
                 .append(".set")
                 .append(upcaseFirseChar(className))
                 .append("(")
                 .append(lowerFirstChar(className))
                 .append("List")
-                .append(");\n\n");
+                .append(");\n");
     }
 
     private void appendFoot(StringBuffer sb) {

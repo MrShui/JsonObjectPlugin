@@ -1,17 +1,17 @@
 <idea-plugin>
-  <id>com.your.company.unique.plugin.id</id>
-  <name>Plugin display name here</name>
+  <id>com.syw.jsonobject</id>
+  <name>jsonObject</name>
   <version>1.0</version>
-  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+  <vendor email="androidforwork@163.com" url="https://github.com/MrShui/JsonObjectPlugin">PP</vendor>
 
   <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+      1.使用GsonFormat生成json实体类<br>
+      2.在json实体类中generate->jsonObject，jsonObject代码生成在了剪贴板中<br>
+      3.在需要生成代码的地方,复制即可<br>
     ]]></description>
 
   <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
+      基本能使用.<br>
     ]]>
   </change-notes>
 
